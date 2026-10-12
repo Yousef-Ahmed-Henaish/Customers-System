@@ -6,23 +6,78 @@ namespace Customers_System.OrderData;
 
 public class OrderManagment
 {
+
+    const int MaxCustomers = 50;
+    const int MaxProducts = 50;
+    const int MaxLinesPerOrder = 20;
     public const int MaxOrders = 100;
     public static List<Order> Orders = new List<Order>();
 
+    //Flaw: anyone can access it and change the entire data. ( violate encapsulation )
+    public static List<Customer> Customers = new List<Customer>();
+    public static List<Product> Products = new List<Product>();
 
 
 
-    /*
-            if (OrderIsFound(order.ID))
-                throw new Exception("Not Avaliable. Order Not Found");
-            else if (order.IsPaid == false)
-                throw new Exception("Not Avaliable. Order Not Paid");
-    */
 
-
-    Order CreateOrder(Customer customer, List<Line> lines)
+    public static void PrintCustomers()
     {
-        Order order = new Order(customer, false,lines);
+        Console.WriteLine($"Cutomers: {Customers.Count}");
+        foreach (var customer in Customers)
+        {
+            int i = 0; i++;
+            Console.WriteLine($"{i + 1}. Name: {customer.Name}, Id: {customer.ID} , Governate: {customer.Governate}, Email: {customer.Email}");
+        }
+    }
+
+    public static decimal TotalSalesPaidOnly()
+    {
+        decimal Total = 0;
+        foreach (var order in Orders)
+        {
+            if (order.IsPaid)
+                Total += order.Total;
+        }
+        return Total;
+    }
+
+    public static int FindCustomerIndexById(int Id)
+    {
+        foreach (var customer in Customers)
+        {
+            if (Id == customer.ID)
+            {
+                return Customers.IndexOf(customer);
+            }
+        }
+
+        return -1;
+    }
+
+    public static int FindProductIndexById(int id)
+    {
+        foreach (var product in Products)
+        {
+            if (id == product.ID)
+                return Products.IndexOf(product);
+        }
+
+        return -1;
+    }
+
+    void addCustomer( string name, string email, string governate, bool isVip)
+    {
+        Customers.Add(new Customer(name, email, governate, isVip));
+    }
+
+    bool CustomerIsFound(Customer customer)
+    {
+        return Customers.Contains(customer);
+    }
+
+    public static Order CreateOrder(Customer customer, List<Line> lines)
+    {
+        Order order = new Order(customer, false, lines);
         Orders.Add(order);
         return order;
     }
@@ -50,17 +105,17 @@ public class OrderManagment
 
 
 
-    void AddLineToOrder(Order order, Product product, int quantity) 
+    public static void AddLineToOrder(Order order, Product product, int quantity) 
     {
         order.Lines.Add( new Line(product, quantity) );
     }
-   
-    void MarkOrderPaid(Order order) 
+
+    public static void MarkOrderPaid(Order order) 
     {
         order.IsPaid = true;
     }
 
-    void PrintOrder(Order order)
+    public static void PrintOrder(Order order)
     {
         Console.WriteLine($"===== Order {order.ID} =====");
 
@@ -76,7 +131,7 @@ public class OrderManagment
         Console.WriteLine($"Total: {CalculateOrderTotal(order)}");
     }
 
-    Boolean OrderIsFound(Order order)
+    public static Boolean OrderIsFound(Order order)
     {
         foreach (Order Order in Orders)
             if (Order.ID == order.ID)
@@ -85,7 +140,7 @@ public class OrderManagment
         return false;
     }
 
-    int FindOrderIndexById(int id)
+    public static int FindOrderIndexById(int id)
     {
         foreach (Order Order in Orders)
             if (id == Order.ID)
@@ -94,5 +149,23 @@ public class OrderManagment
         return -1;
     }
 
+    public static void PrintAllOrders()
+    {
+        Console.WriteLine($"Orders: {Orders.Count}");
+        foreach (var order in Orders)
+        {
+            PrintOrder(order);
+        }
+    }
+
+    public static void PrintProducts()
+    {
+        Console.WriteLine($"Products: {Products.Count}");
+        foreach (var product in Products)
+        {
+            int i = 0; i++;
+            Console.WriteLine($"{i + 1}. Name: {product.Name}, Id: {product.ID}, Price: {product.Price}, Stock: {product.Stock}");
+        }
+    }
 
 }
